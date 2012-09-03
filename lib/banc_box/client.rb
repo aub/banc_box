@@ -155,7 +155,7 @@ module BancBox
       if response['errors'].nil?
         BancBox::Client.new(response)
       else
-        raise BancBoxException.new(response['errors'])
+        raise BancBox::Exception.new(response['errors'])
       end
     end
   end
