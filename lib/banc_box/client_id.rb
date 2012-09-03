@@ -8,7 +8,7 @@ module BancBox
     # @option options [Integer] :banc_box_id The bancbox id for the client.
     # @option options [String] :reference_id Your own id for the client.
     # @return [ClientId] The new id.
-    def initialize(options)
+    def initialize(options={})
       @banc_box_id = options['banc_box_id']
       @reference_id = options['reference_id']
     end
