@@ -9,8 +9,8 @@ module BancBox
     # @option options [String] :reference_id Your own id for the client.
     # @return [ClientId] The new id.
     def initialize(options={})
-      @banc_box_id = options['banc_box_id']
-      @reference_id = options['reference_id']
+      @banc_box_id = options[:banc_box_id]
+      @reference_id = options[:reference_id]
     end
 
     def raw_data=(data)

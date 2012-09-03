@@ -1,10 +1,19 @@
 module BancBox
   class Client
 
+    # not yet done:
+    #   linkFile
+    #   getSchedules
+    #   cancelSchedules
+    #   collectFees
+
     def initialize(data)
-      @client_id = ClientId.new  
-      @client_id.raw_data = data['clientId']
+      if data['clientId']
+        @client_id = ClientId.new  
+        @client_id.raw_data = data['clientId']
+      end
       @status = data['clientStatus']
+      @data = data
     end
 
     def id
@@ -113,7 +122,6 @@ module BancBox
           :zipcode => options[:address][:zipcode]
         }
       end
-
       parse_response(
         BancBox.connection.post('updateClient', data)
       )
@@ -125,7 +133,7 @@ module BancBox
     # @return [Client] The client object
     # @param client_id [ClientId] A client_id object.
     # @param client_status [String] The new status of the client specified enum{'ACTIVE', 'INACTIVE', 'SUSPENDED'}. Required.
-    def self.updateStatus(client_id, client_status)
+    def self.update_status(client_id, client_status)
       data = {
         :clientId => client_id.to_hash,
         :clientStatus => client_status
@@ -151,11 +159,61 @@ module BancBox
       )
     end
 
+    # Search for clients.
+    #
+    # @see http://www.bancbox.com/api/view/8
+    # @return [Client] The client objects
+    # @param options [Hash] A customizable set of options.
+    # @option options [ClientId] :client_id Search by client id.
+    # @option options [Time] :created_on_from_date The start date.
+    # @option options [Time] :created_on_to_date The end date.
+    # @option options [Time] :modified_on_from_date The modified on start date.
+    # @option options [Time] :modified_on_to_date The modified on end date.
+    # @option options [String] :status Status of client, { 'ACTIVE', 'INACTIVE', 'CANCELLED', 'SUSPENDED', 'DELETED' }
+    def self.search(options)
+      data = {
+        :clientId => options[:client_id] && options[:client_id].to_hash,
+        :createdOnFromDate => time_to_string(options[:created_on_from_date]),
+        :createdOnToDate => time_to_string(options[:created_on_to_date]),
+        :modifiedOnFromDate => time_to_string(options[:modified_on_from_date]),
+        :modifiedOnToDate => time_to_string(options[:modified_on_to_date]),
+        :status => options[:status]
+      }
+      parse_response(
+        BancBox.connection.post('searchClients', data)
+      )
+    end
+
+    # Find a client.
+    #
+    # @see http://www.bancbox.com/api/view/16
+    # @return [Client] The client object
+    # @param client_id [ClientId] A client_id object.
+    def self.get_client(client_id)
+      data = {
+        :clientId => client_id.to_hash
+      }
+      parse_response(
+        BancBox.connection.post('getClient', data)
+      )
+    end
+
+    def self.time_to_string(date)
+      date && date.strftime('%Y-%m-%dT%H:%M:%S')
+    end
+
     def self.parse_response(response)
-      if response['errors'].nil?
-        BancBox::Client.new(response)
-      else
+      puts response.inspect
+      if !response['errors'].nil?
         raise BancBox::Error.new(response['errors'])
+      elsif response['clients']
+        response['clients'].map do |c|
+          BancBox::Client.new(c)
+        end
+      elsif response['client']
+        BancBox::Client.new(response['client']
+      else
+        BancBox::Client.new(response)
       end
     end
   end
