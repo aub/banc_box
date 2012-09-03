@@ -145,13 +145,13 @@ module BancBox
         BancBox.connection.post('updateClientStatus', data)
       )
     end
-  end
 
-  def self.parse_response(response)
-    if response['errors'].present
-      raise BancBoxException.new(response['errors'])
-    else
-      BancBox::Client.new(response)
+    def self.parse_response(response)
+      if response['errors'].present
+        raise BancBoxException.new(response['errors'])
+      else
+        BancBox::Client.new(response)
+      end
     end
   end
 end
