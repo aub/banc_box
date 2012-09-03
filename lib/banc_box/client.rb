@@ -1,12 +1,14 @@
 module BancBox
   class Client
 
-    attr_reader :client_id
-
     def initialize(data)
       @client_id = ClientId.new  
       @client_id.raw_data = data['clientId']
       @status = data['clientStatus']
+    end
+
+    def id
+      @client_id
     end
 
     # Register a new client
@@ -120,7 +122,7 @@ module BancBox
     # @return [Client] The client object
     # @param client_id [ClientId] A client_id object.
     # @param client_status [String] The new status of the client specified enum{'ACTIVE', 'INACTIVE', 'SUSPENDED'}. Required.
-    def self.update(client_id, client_status)
+    def self.updateStatus(client_id, client_status)
       data = {
         :clientId => client_id.to_hash,
         :clientStatus => client_status
@@ -142,7 +144,7 @@ module BancBox
         :comment => comment
       }
       parse_response(
-        BancBox.connection.post('updateClientStatus', data)
+        BancBox.connection.post('cancelClient', data)
       )
     end
 
