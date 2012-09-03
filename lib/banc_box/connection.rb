@@ -53,7 +53,7 @@ module BancBox
         builder.use Faraday::Request::Multipart
         builder.use FaradayMiddleware::EncodeJson
         builder.use FaradayMiddleware::ParseJson
-        builder.use FaradayMiddleware::Mashify
+        # builder.use FaradayMiddleware::Mashify
         builder.adapter Faraday.default_adapter
       end
     end
