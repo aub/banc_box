@@ -147,10 +147,10 @@ module BancBox
     end
 
     def self.parse_response(response)
-      if response['errors'].present
-        raise BancBoxException.new(response['errors'])
-      else
+      if response['errors'].nil?
         BancBox::Client.new(response)
+      else
+        raise BancBoxException.new(response['errors'])
       end
     end
   end
