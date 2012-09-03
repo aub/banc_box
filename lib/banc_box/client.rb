@@ -98,19 +98,22 @@ module BancBox
         :middleInitial => options[:middle_initial],
         :ssn => options[:ssn],
         :dob => dob,
-        :address => {
-          :line1 => options[:address][:line1],
-          :line2 => options[:address][:line2],
-          :city => options[:address][:city],
-          :state => options[:address][:state],
-          :zipcode => options[:address][:zipcode]
-        },
         :homePhone => options[:home_phone],
         :mobilePhone => options[:mobile_phone],
         :workPhone => options[:work_phone],
         :email => options[:email],
         :username => options[:username]
       }
+      if options[:address]
+        data[:address] = {
+          :line1 => options[:address][:line1],
+          :line2 => options[:address][:line2],
+          :city => options[:address][:city],
+          :state => options[:address][:state],
+          :zipcode => options[:address][:zipcode]
+        }
+      end
+
       parse_response(
         BancBox.connection.post('updateClient', data)
       )
