@@ -1,7 +1,7 @@
 require 'faraday'
 require 'faraday_middleware'
 
-%w(config connection).each do |file|
+%w(client client_id config connection error).each do |file|
   require File.join(File.dirname(__FILE__), 'banc_box', file)
 end
 

@@ -1,5 +1,13 @@
-module BankBox
+module BancBox
   class Client
+
+    attr_reader :client_id
+
+    def initialize(data)
+      @client_id = ClientId.new  
+      @client_id.raw_data = data['clientId']
+      @status = data['clientStatus']
+    end
 
     # Register a new client
     #
@@ -48,16 +56,16 @@ module BankBox
         :email => options[:email],
         :username => options[:username]
       }
-      BancBox.connection.post('createClient', data)
+      parse_response(
+        BancBox.connection.post('createClient', data)
+      )
     end
 
     # Update a client
     #
     # @see http://www.bancbox.com/api/view/12
     # @return [Client] The client object
-    # @param client_id [Hash] Either a bancbox id or a reference id. One or the other is required.
-    # @option client_id [Integer] :banc_box_id The bancbox id for the client.
-    # @option client_id [String] :reference_id Your own id for the client.
+    # @param client_id [ClientId] A client_id object.
     # @param options [Hash] A customizable set of options.
     # @option options [String] :reference_id An id for the client that you have generated.
     # @option options [String] :first_name The client's first name.
@@ -82,6 +90,7 @@ module BankBox
         dob = dob.strftime('%Y-%m-%d')
       end
       data = {
+        :clientId => client_id.to_hash,
         :firstName => options[:first_name],
         :lastName => options[:last_name],
         :middleInitial => options[:middle_initial],
@@ -99,45 +108,50 @@ module BankBox
         :workPhone => options[:work_phone],
         :email => options[:email],
         :username => options[:username]
-      }.merge(client_id_hash(client_id))
-      BancBox.connection.post('updateClient', data)
+      }
+      parse_response(
+        BancBox.connection.post('updateClient', data)
+      )
     end
 
     # Update a client's status.
     #
     # @see http://www.bancbox.com/api/view/13
     # @return [Client] The client object
-    # @param client_id [Hash] Either a bancbox id or a reference id. One or the other is required.
-    # @option client_id [Integer] :banc_box_id The bancbox id for the client.
-    # @option client_id [String] :reference_id Your own id for the client.
+    # @param client_id [ClientId] A client_id object.
     # @param client_status [String] The new status of the client specified enum{'ACTIVE', 'INACTIVE', 'SUSPENDED'}. Required.
     def self.update(client_id, client_status)
-      data = client_id_hash(client_id)
-      data[:clientStatus] = client_status
-      BancBox.connection.post('updateClientStatus', data)
+      data = {
+        :clientId => client_id.to_hash,
+        :clientStatus => client_status
+      }
+      parse_response(
+        BancBox.connection.post('updateClientStatus', data)
+      )
     end
 
     # Cancel a client.
     #
     # @see http://www.bancbox.com/api/view/10
     # @return [Client] The client object
-    # @param client_id [Hash] Either a bancbox id or a reference id. One or the other is required.
-    # @option client_id [Integer] :banc_box_id The bancbox id for the client.
-    # @option client_id [String] :reference_id Your own id for the client.
+    # @param client_id [ClientId] A client_id object.
     # @param comment [String] A comment about the cancellation.
     def self.cancel(client_id, comment)
-      data = client_id_hash(client_id)
-      data[:comment] = comment
-      BancBox.connection.post('updateClientStatus', data)
-    end
-
-    def self.client_id_hash(client_id)
-      {
-        :clientId => {
-          :bancBoxId => client_id[:banc_box_id],
-          :subscriberReferenceId => client_id[:reference_id]
-        }
+      data = {
+        :clientId => client_id.to_hash,
+        :comment => comment
       }
+      parse_response(
+        BancBox.connection.post('updateClientStatus', data)
+      )
+    end
+  end
+
+  def self.parse_response(response)
+    if response['errors'].present
+      raise BancBoxException.new(response['errors'])
+    else
+      BancBox::Client.new(response)
     end
   end
 end
