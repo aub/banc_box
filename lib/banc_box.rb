@@ -10,4 +10,8 @@ module BancBox
     yield Config
     Config
   end
+
+  def self.connection
+    @connection ||= BancBox::Connection.new
+  end
 end

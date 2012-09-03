@@ -44,13 +44,14 @@ module BancBox
       options = {
         :url => @base_url,
         :headers => {
+          :content_type => 'application/json',
           :accept =>  'application/json',
           :user_agent => 'ruby'
         }
       }
       @faraday_connection ||= Faraday::Connection.new(options) do |builder|
         builder.use Faraday::Request::UrlEncoded
-        builder.use Faraday::Request::Multipart
+        # builder.use Faraday::Request::Multipart
         builder.use FaradayMiddleware::EncodeJson
         builder.use FaradayMiddleware::ParseJson
         # builder.use FaradayMiddleware::Mashify
