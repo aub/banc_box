@@ -24,12 +24,19 @@ module BancBox
       @zipcode = attrs[:zipcode]
     end
 
+    # Create an address from a server response
+    #
+    # @return [BancBox::Address] The address object
+    # @param response [Hash] The response data
     def self.from_response(response)
       if response
         self.new(response)
       end
     end
 
+    # Convert the address object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       {
         :line1 => @line1,

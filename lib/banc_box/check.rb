@@ -9,7 +9,7 @@ module BancBox
     # @return [BancBox::Check] The check object
     # @param data [Hash] A customizable set of options.
     # @option data [String] :name
-    # @option date [BancBox::Address] :address
+    # @option data [BancBox::Address] :address
     def initialize(data)
       @name = data[:name]
       @address = data[:address]
