@@ -15,6 +15,9 @@ module BancBox
       @address = data[:address]
     end
 
+    # Convert the check object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       hash = {
         :name => @name,

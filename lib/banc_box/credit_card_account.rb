@@ -32,6 +32,9 @@ module BancBox
       end
     end
 
+    # Convert the credit card object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       {
         :trackdata => @track_data,

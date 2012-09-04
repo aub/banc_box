@@ -13,7 +13,7 @@ module BancBox
     # @option data [String] :routing_number
     # @option data [String] :account_number
     # @option data [String] :holder_name
-    # @option data [String] :type
+    # @option data [String] :type Must be CHECKING or SAVINGS
     def initialize(data)
       @routing_number = data[:routing_number]
       @account_number = data[:account_number]
@@ -21,6 +21,9 @@ module BancBox
       @type = data[:type]
     end
 
+    # Convert the account object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       {
         :routingNumber => @track_data,

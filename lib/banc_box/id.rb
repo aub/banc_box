@@ -20,6 +20,9 @@ module BancBox
       )
     end
 
+    # Convert the id object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       {
         :bancBoxId => @banc_box_id,

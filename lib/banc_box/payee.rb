@@ -25,6 +25,9 @@ module BancBox
       end
     end
 
+    # Convert the payee object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       hash = {
         :payeeAccountNumber => @account_number,

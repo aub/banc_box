@@ -21,6 +21,9 @@ module BancBox
       @schedule_date = attrs[:schedule_date]
     end
 
+    # Convert the debit object to a hash appropriate for sending to BancBox
+    #
+    # @return [Hash] The data hash
     def to_hash
       {
         :referenceId => @reference_id,
