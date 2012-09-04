@@ -2,9 +2,9 @@ require 'faraday'
 require 'faraday_middleware'
 
 files = [
-  'api_service', 'account', 'address', 'bank_account', 'client',
+  'api_service', 'account', 'address', 'bank_account', 'check', 'client',
   'config', 'connection', 'credit_card_account', 'debit_item',
-  'error', 'funds', 'id'
+  'error', 'funds', 'id', 'payee', 'paypal_account'
 ]
 
 files.each do |file|
