@@ -33,7 +33,7 @@ describe BancBox::Client do
       :home_phone => '555-555-5555',
       :email => 'aubreyholland@gmail.com'
     })
-    data.should be_an_instance_of(BancBox::ClientId)
+    data.should be_an_instance_of(BancBox::Id)
     data.to_hash.should == {
       :bancBoxId => 123,
       :subscriberReferenceId => nil
@@ -49,7 +49,7 @@ describe BancBox::Client do
       :body => {"clientStatus"=>"ACTIVE", "requestId"=>1346686280079, "status"=>1, "warnings"=>nil}
     )
     data = BancBox::Client.update(
-      BancBox::ClientId.new(:banc_box_id => 123),
+      BancBox::Id.new(:banc_box_id => 123),
       { :first_name => 'Aubrey' }
     )
     data.should be_an_instance_of(Hash)
@@ -70,7 +70,7 @@ describe BancBox::Client do
       :body => {"newStatus"=>"INACTIVE", "requestId"=>1346686684904, "status"=>1, "warnings"=>nil}
     )
     data = BancBox::Client.update_status(
-      BancBox::ClientId.new(:banc_box_id => 123),
+      BancBox::Id.new(:banc_box_id => 123),
       'INACTIVE'
     )
     data.should be_an_instance_of(Hash)
@@ -145,7 +145,7 @@ describe BancBox::Client do
       }
     )
     data = BancBox::Client.get_client(
-      BancBox::ClientId.new(:banc_box_id => 123)
+      BancBox::Id.new(:banc_box_id => 123)
     )
     data.should be_an_instance_of(BancBox::Client)
   end
@@ -159,7 +159,7 @@ describe BancBox::Client do
       :body => {"openAccounts"=>[{"id"=>{}}], "requestId"=>810, "status"=>1, "warnings"=>nil}
     )
     data = BancBox::Client.cancel(
-      BancBox::ClientId.new(:banc_box_id => 123),
+      BancBox::Id.new(:banc_box_id => 123),
       'He deserved it'
     )
     data.should be_an_instance_of(Hash)

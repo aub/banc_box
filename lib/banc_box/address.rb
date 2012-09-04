@@ -9,7 +9,7 @@ module BancBox
 
     # Create an address.
     #
-    # @return [Address] The address object
+    # @return [BancBox::Address] The address object
     # @param attrs [Hash] A customizable set of options.
     # @option attrs [String] :line1 The first line of the address.
     # @option attrs [String] :line2 The second line of the address.

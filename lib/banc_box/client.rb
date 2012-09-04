@@ -13,7 +13,7 @@ module BancBox
     #
     # @return [Client] The new client object
     # @param data [Hash] A customizable set of data.
-    # @option data [BancBox::ClientId] :client_id Client id.
+    # @option data [BancBox::Id] :client_id Client id.
     # @option data [String] :first_name The client's first name.
     # @option data [String] :last_name The client's last name.
     # @option data [String] :middle_initial The client's middle initial.
@@ -40,7 +40,7 @@ module BancBox
 
     def self.from_response(response)
       self.new({
-        :client_id => BancBox::ClientId.from_response(response['clientId']),
+        :client_id => BancBox::Id.from_response(response['clientId']),
         :first_name => response['firstName'],
         :last_name => response['lastName'],
         :middle_initial => response['middleInitial'],
@@ -90,7 +90,7 @@ module BancBox
       }
 
       object_from_response(
-        BancBox::ClientId,
+        BancBox::Id,
         :post,
         'createClient',
         data,
@@ -102,7 +102,7 @@ module BancBox
     #
     # @see http://www.bancbox.com/api/view/12
     # @return [Hash] The returned data.
-    # @param client_id [ClientId] A client_id object.
+    # @param client_id [BancBox::Id] A client_id object.
     # @param options [Hash] A customizable set of options.
     # @option options [String] :reference_id An id for the client that you have generated.
     # @option options [String] :first_name The client's first name.
@@ -141,7 +141,7 @@ module BancBox
     #
     # @see http://www.bancbox.com/api/view/13
     # @return [Hash] The response data.
-    # @param client_id [ClientId] A client_id object.
+    # @param client_id [BancBox::Id] A client_id object.
     # @param client_status [String] The new status of the client specified enum{'ACTIVE', 'INACTIVE', 'SUSPENDED'}. Required.
     def self.update_status(client_id, client_status)
       data = {
@@ -157,7 +157,7 @@ module BancBox
     # @see http://www.bancbox.com/api/view/8
     # @return [Array<BancBox::Client>] The client objects
     # @param options [Hash] A customizable set of options.
-    # @option options [ClientId] :client_id Search by client id.
+    # @option options [BancBox::Id] :client_id Search by client id.
     # @option options [Time] :created_on_from_date The start date.
     # @option options [Time] :created_on_to_date The end date.
     # @option options [Time] :modified_on_from_date The modified on start date.
@@ -185,7 +185,7 @@ module BancBox
     #
     # @see http://www.bancbox.com/api/view/16
     # @return [BancBox::Client] The client object
-    # @param client_id [ClientId] A client_id object.
+    # @param client_id [BancBox::Id] A bancbox id.
     def self.get_client(client_id)
       data = {
         :clientId => client_id.to_hash
@@ -197,7 +197,7 @@ module BancBox
     #
     # @see http://www.bancbox.com/api/view/10
     # @return [Hash] The response data
-    # @param client_id [ClientId] A client_id object.
+    # @param client_id [BancBox::Id] A client_id object.
     # @param comment [String] A comment about the cancellation.
     def self.cancel(client_id, comment)
       data = {

@@ -5,7 +5,11 @@ module BancBox
     end
 
     def formatted_date(date)
-        date && date.strftime('%Y-%m-%d')
+      date && date.strftime('%Y-%m-%d')
+    end
+
+    def boolean_to_yes_no(bool)
+      bool ? 'YES' : 'NO'
     end
 
     def get_response(method, endpoint, data)
