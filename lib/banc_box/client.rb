@@ -1,23 +1,59 @@
 module BancBox
   class Client
 
+    extend BancBox::ApiService
+
     # not yet done:
     #   linkFile
     #   getSchedules
     #   cancelSchedules
     #   collectFees
 
+    # Create a new client instance
+    #
+    # @return [Client] The new client object
+    # @param data [Hash] A customizable set of data.
+    # @option data [BancBox::ClientId] :client_id Client id.
+    # @option data [String] :first_name The client's first name.
+    # @option data [String] :last_name The client's last name.
+    # @option data [String] :middle_initial The client's middle initial.
+    # @option data [String] :ssn The client's social.
+    # @option data [BancBox::Address] :address The client's address.
+    # @option data [String] :home_phone The client's home phone #.
+    # @option data [String] :mobile_phone The client's mobile phone #.
+    # @option data [String] :work_phone The client's work phone #.
+    # @option data [String] :email The client's email address.
+    # @option data [String] :username Username for BancBox client portal.
+    # @option data [String] :status The user status
+    # @option data [Integer] :modified_by
+    # @option data [Integer] :created_by
     def initialize(data)
-      if data['clientId']
-        @client_id = ClientId.new  
-        @client_id.raw_data = data['clientId']
+      attrs = [
+        :client_id, :first_name, :last_name, :middle_initial, :ssn,
+        :address, :home_phone, :mobile_phone, :work_phone, :email,
+        :username, :status, :modified_by, :created_by
+      ]
+      attrs.each do |attr|
+        instance_variable_set("@#{attr}", data[attr])
       end
-      @status = data['clientStatus']
-      @data = data
     end
 
-    def id
-      @client_id
+    def self.from_response(response)
+      self.new({
+        :client_id => BancBox::ClientId.from_response(response['clientId']),
+        :first_name => response['firstName'],
+        :last_name => response['lastName'],
+        :middle_initial => response['middleInitial'],
+        :ssn => response['ssn'],
+        :address => BancBox::Address.from_response(response['address']),
+        :home_phone => response['homePhone'],
+        :mobile_phone => response['mobilePhone'],
+        :email => response['email'],
+        :username => response['username'],
+        :status => response['status'],
+        :modified_by => response['modifiedBy'],
+        :created_by => response['createdBy']
+      })
     end
 
     # Register a new client
@@ -30,52 +66,42 @@ module BancBox
     # @option options [String] :last_name The client's last name. Required.
     # @option options [String] :middle_initial The client's middle initial.
     # @option options [String] :ssn The client's social, in NNN-NN-NNNN format. Required.
-    # @option options [Date] :dob The client's date of birth, either a date or a string in 'YYYY-MM-DD format'. Required.
-    # @option options [Hash] :address The client's address. Required.
-    # @options options[:address] [String] :line1 The first line of the address. Required.
-    # @options options[:address] [String] :line2 The second line of the address.
-    # @options options[:address] [String] :city The city of the address. Required.
-    # @options options[:address] [String] :state The state of the address. Required.
-    # @options options[:address] [String] :zipcode The zipcode of the address. Required.
+    # @option options [Date] :dob The client's date of birth. Required.
+    # @option options [BancBox::Address] :address The client's address. Required.
     # @options options [String] :home_phone The client's home phone #. Required.
     # @options options [String] :mobile_phone The client's mobile phone #.
     # @options options [String] :work_phone The client's work phone #.
     # @options options [String] :email The client's email address. Required.
     # @options options [String] :username Login username for BancBox client portal.
     def self.create(options)
-      dob = options[:dob]
-      if dob && dob.is_a?(Date)
-        dob = dob.strftime('%Y-%m-%d')
-      end
       data = {
         :referenceId => options[:reference_id],
         :firstName => options[:first_name],
         :lastName => options[:last_name],
         :middleInitial => options[:middle_initial],
         :ssn => options[:ssn],
-        :dob => dob,
-        :address => {
-          :line1 => options[:address][:line1],
-          :line2 => options[:address][:line2],
-          :city => options[:address][:city],
-          :state => options[:address][:state],
-          :zipcode => options[:address][:zipcode]
-        },
+        :dob => formatted_date(options[:dob]),
+        :address => options[:address] && options[:address].to_hash,
         :homePhone => options[:home_phone],
         :mobilePhone => options[:mobile_phone],
         :workPhone => options[:work_phone],
         :email => options[:email],
         :username => options[:username]
       }
-      parse_response(
-        BancBox.connection.post('createClient', data)
+
+      object_from_response(
+        BancBox::ClientId,
+        :post,
+        'createClient',
+        data,
+        'clientId'
       )
     end
 
     # Update a client
     #
     # @see http://www.bancbox.com/api/view/12
-    # @return [Client] The client object
+    # @return [Hash] The returned data.
     # @param client_id [ClientId] A client_id object.
     # @param options [Hash] A customizable set of options.
     # @option options [String] :reference_id An id for the client that you have generated.
@@ -84,29 +110,20 @@ module BancBox
     # @option options [String] :middle_initial The client's middle initial.
     # @option options [String] :ssn The client's social, in NNN-NN-NNNN format.
     # @option options [Date] :dob The client's date of birth, either a date or a string in 'YYYY-MM-DD format'.
-    # @options options [Hash] :address The client's address.
-    # @option options[:address] [String] :line1 The first line of the address.
-    # @option options[:address] [String] :line2 The second line of the address.
-    # @option options[:address] [String] :city The city of the address.
-    # @option options[:address] [String] :state The state of the address.
-    # @option options[:address] [String] :zipcode The zipcode of the address.
+    # @options options [BancBox::Address] :address The client's address.
     # @option options [String] :home_phone The client's home phone #.
     # @option options [String] :mobile_phone The client's mobile phone #.
     # @option options [String] :work_phone The client's work phone #.
     # @option options [String] :email The client's email address.
     # @option options [String] :username Login username for BancBox client portal.
     def self.update(client_id, options)
-      dob = options[:dob]
-      if dob && dob.is_a?(Date)
-        dob = dob.strftime('%Y-%m-%d')
-      end
       data = {
         :clientId => client_id.to_hash,
         :firstName => options[:first_name],
         :lastName => options[:last_name],
         :middleInitial => options[:middle_initial],
         :ssn => options[:ssn],
-        :dob => dob,
+        :dob => formatted_date(options[:dob]),
         :homePhone => options[:home_phone],
         :mobilePhone => options[:mobile_phone],
         :workPhone => options[:work_phone],
@@ -114,23 +131,16 @@ module BancBox
         :username => options[:username]
       }
       if options[:address]
-        data[:address] = {
-          :line1 => options[:address][:line1],
-          :line2 => options[:address][:line2],
-          :city => options[:address][:city],
-          :state => options[:address][:state],
-          :zipcode => options[:address][:zipcode]
-        }
+        data[:address] = options[:address].to_hash
       end
-      parse_response(
-        BancBox.connection.post('updateClient', data)
-      )
+
+      get_response(:post, 'updateClient', data)
     end
 
     # Update a client's status.
     #
     # @see http://www.bancbox.com/api/view/13
-    # @return [Client] The client object
+    # @return [Hash] The response data.
     # @param client_id [ClientId] A client_id object.
     # @param client_status [String] The new status of the client specified enum{'ACTIVE', 'INACTIVE', 'SUSPENDED'}. Required.
     def self.update_status(client_id, client_status)
@@ -138,31 +148,14 @@ module BancBox
         :clientId => client_id.to_hash,
         :clientStatus => client_status
       }
-      parse_response(
-        BancBox.connection.post('updateClientStatus', data)
-      )
-    end
 
-    # Cancel a client.
-    #
-    # @see http://www.bancbox.com/api/view/10
-    # @return [Client] The client object
-    # @param client_id [ClientId] A client_id object.
-    # @param comment [String] A comment about the cancellation.
-    def self.cancel(client_id, comment)
-      data = {
-        :clientId => client_id.to_hash,
-        :comment => comment
-      }
-      parse_response(
-        BancBox.connection.post('cancelClient', data)
-      )
+      get_response(:post, 'updateClientStatus', data)
     end
 
     # Search for clients.
     #
     # @see http://www.bancbox.com/api/view/8
-    # @return [Client] The client objects
+    # @return [Array<BancBox::Client>] The client objects
     # @param options [Hash] A customizable set of options.
     # @option options [ClientId] :client_id Search by client id.
     # @option options [Time] :created_on_from_date The start date.
@@ -173,48 +166,45 @@ module BancBox
     def self.search(options)
       data = {
         :clientId => options[:client_id] && options[:client_id].to_hash,
-        :createdOnFromDate => time_to_string(options[:created_on_from_date]),
-        :createdOnToDate => time_to_string(options[:created_on_to_date]),
-        :modifiedOnFromDate => time_to_string(options[:modified_on_from_date]),
-        :modifiedOnToDate => time_to_string(options[:modified_on_to_date]),
+        :createdOnFromDate => formatted_time(options[:created_on_from_date]),
+        :createdOnToDate => formatted_time(options[:created_on_to_date]),
+        :modifiedOnFromDate => formatted_time(options[:modified_on_from_date]),
+        :modifiedOnToDate => formatted_time(options[:modified_on_to_date]),
         :status => options[:status]
       }
-      parse_response(
-        BancBox.connection.post('searchClients', data)
+      collection_from_response(
+        BancBox::Client,
+        :post,
+        'searchClients',
+        data,
+        'clients'
       )
     end
 
     # Find a client.
     #
     # @see http://www.bancbox.com/api/view/16
-    # @return [Client] The client object
+    # @return [BancBox::Client] The client object
     # @param client_id [ClientId] A client_id object.
     def self.get_client(client_id)
       data = {
         :clientId => client_id.to_hash
       }
-      parse_response(
-        BancBox.connection.post('getClient', data)
-      )
+      object_from_response(BancBox::Client, :post, 'getClient', data, 'client')
     end
 
-    def self.time_to_string(date)
-      date && date.strftime('%Y-%m-%dT%H:%M:%S')
-    end
-
-    def self.parse_response(response)
-      puts response.inspect
-      if !response['errors'].nil?
-        raise BancBox::Error.new(response['errors'])
-      elsif response['clients']
-        response['clients'].map do |c|
-          BancBox::Client.new(c)
-        end
-      elsif response['client']
-        BancBox::Client.new(response['client']
-      else
-        BancBox::Client.new(response)
-      end
+    # Cancel a client.
+    #
+    # @see http://www.bancbox.com/api/view/10
+    # @return [Hash] The response data
+    # @param client_id [ClientId] A client_id object.
+    # @param comment [String] A comment about the cancellation.
+    def self.cancel(client_id, comment)
+      data = {
+        :clientId => client_id.to_hash,
+        :comment => comment
+      }
+      get_response(:post, 'cancelClient', data)
     end
   end
 end

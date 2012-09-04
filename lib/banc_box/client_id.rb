@@ -13,9 +13,11 @@ module BancBox
       @reference_id = options[:reference_id]
     end
 
-    def raw_data=(data)
-      @banc_box_id = data['bancBoxId']
-      @reference_id = data['subscriberReferenceId']
+    def self.from_response(response)
+      self.new(
+        :banc_box_id => response['bancBoxId'],
+        :reference_id => response['subscriberReferenceId']
+      )
     end
 
     def to_hash
