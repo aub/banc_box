@@ -60,6 +60,18 @@ Or collect funds:
       }
     )
 
+We've got your hookup for the following BancBox endpoints:
+
++ createClient
++ updateClient
++ updateClientStatus
++ searchClients
++ getClient
++ cancelClient
++ collectFunds
++ openAccount
++ transferFunds
+
 ## <a name="todo"></a>Todo
 
 The following endpoints have not yet been implemented:
