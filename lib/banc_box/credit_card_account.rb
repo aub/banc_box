@@ -15,11 +15,11 @@ module BancBox
     # @return [BancBox::CreditCardAccount] The account object
     # @param data [Hash] A customizable set of options.
     # @option data [String] :track_data
-    # @option data [String] :number
-    # @option data [String] :expiry_month
-    # @option data [String] :expiry_year
-    # @option data [String] :type
-    # @option data [String] :name
+    # @option data [String] :number The credit card number
+    # @option data [String] :expiry_month As MM
+    # @option data [String] :expiry_year As YY
+    # @option data [String] :type  'VISA', 'MASTERCARD', or 'AMERICANEXPRESS'
+    # @option data [String] :name The name on the card
     # @option data [String] :cvv
     # @option data [BancBox::Address] :address
     def initialize(data)
@@ -39,7 +39,7 @@ module BancBox
       {
         :trackdata => @track_data,
         :number => @number,
-        :expiryDate => "#{@expiryMonth}/#{@expiryYear}",
+        :expiryDate => "#{@expiry_month}/#{@expiry_year}",
         :type => @type,
         :name => @name,
         :cvv => @cvv,

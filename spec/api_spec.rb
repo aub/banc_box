@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BancBox::Client do
+describe BancBox do
 
   before do
     BancBox.configure do |config|
@@ -19,7 +19,7 @@ describe BancBox::Client do
       :status => 200,
       :body => {"clientId"=>{"bancBoxId"=>123}, "clientStatus"=>"ACTIVE", "requestId"=>123, "status"=>1}
     )
-    data = BancBox::Client.create({
+    data = BancBox.create_client({
       :first_name => 'Aubrey',
       :last_name => 'Holland',
       :ssn => '555-55-5555',
@@ -48,7 +48,7 @@ describe BancBox::Client do
       :status => 200,
       :body => {"clientStatus"=>"ACTIVE", "requestId"=>1346686280079, "status"=>1, "warnings"=>nil}
     )
-    data = BancBox::Client.update(
+    data = BancBox.update_client(
       BancBox::Id.new(:banc_box_id => 123),
       { :first_name => 'Aubrey' }
     )
@@ -69,7 +69,7 @@ describe BancBox::Client do
       :status => 200,
       :body => {"newStatus"=>"INACTIVE", "requestId"=>1346686684904, "status"=>1, "warnings"=>nil}
     )
-    data = BancBox::Client.update_status(
+    data = BancBox.update_client_status(
       BancBox::Id.new(:banc_box_id => 123),
       'INACTIVE'
     )
@@ -105,7 +105,7 @@ describe BancBox::Client do
         ]
       }
     )
-    data = BancBox::Client.search(
+    data = BancBox.search_clients(
       :created_on_from_date => Time.now - 10000000,
       :created_on_to_date => Time.now - 10000
     )
@@ -144,7 +144,7 @@ describe BancBox::Client do
         'errors' => nil
       }
     )
-    data = BancBox::Client.get_client(
+    data = BancBox.get_client(
       BancBox::Id.new(:banc_box_id => 123)
     )
     data.should be_an_instance_of(BancBox::Client)
@@ -158,7 +158,7 @@ describe BancBox::Client do
       :status => 200,
       :body => {"openAccounts"=>[{"id"=>{}}], "requestId"=>810, "status"=>1, "warnings"=>nil}
     )
-    data = BancBox::Client.cancel(
+    data = BancBox.cancel_client(
       BancBox::Id.new(:banc_box_id => 123),
       'He deserved it'
     )

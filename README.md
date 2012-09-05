@@ -17,7 +17,7 @@ A Ruby wrapper for BancBox's REST API.
 
 ## <a name="usage"></a>Use
 
-You can then access data through BancBox::Client.
+
 
 ## <a name="documentation"></a>Learn
 [http://rdoc.info/github/aub/banc_box][documentation]
