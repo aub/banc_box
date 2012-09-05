@@ -36,7 +36,7 @@ Now you can do clever things like creating an account:
 
 Or collect funds:
 
-    puts BancBox.collect_funds(
+    BancBox.collect_funds(
       :method => 'creditcard',
       :destination_account_id => BancBox::Id.new(:banc_box_id => 'xxxx'),
       :debit_items => [
@@ -81,7 +81,7 @@ The following endpoints have not yet been implemented:
 + updateLinkedExternalAccount
 + closeAccount
 + deleteLinkedExternalAccount
-+ 
+
 ## <a name="documentation"></a>Learn
 [http://rdoc.info/github/aub/banc_box][documentation]
 
