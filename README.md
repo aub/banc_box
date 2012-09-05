@@ -60,14 +60,36 @@ Or collect funds:
       }
     )
 
-  ## <a name="documentation"></a>Learn
-  [http://rdoc.info/github/aub/banc_box][documentation]
+## <a name="todo"></a>Todo
 
-  [documentation]: http://rdoc.info/github/aub/banc_box
+The following endpoints have not yet been implemented:
 
-  ## <a name="copyright"></a>Copyright
-  Copyright (c) 2012 Aubrey Holland
-  See [LICENSE][] for details.
++ linkFile
++ getSchedules
++ cancelSchedules
++ collectFees
++ linkPayee
++ searchBancBoxPayees
++ getClientLinkedPayees
++ updateLinkedPayee
++ sendFunds
++ linkExternalAccount
++ updateAccount
++ getClientAccounts
++ getClientLinkedExternalAccounts
++ getAccountActivity
++ updateLinkedExternalAccount
++ closeAccount
++ deleteLinkedExternalAccount
++ 
+## <a name="documentation"></a>Learn
+[http://rdoc.info/github/aub/banc_box][documentation]
 
-  [license]: https://github.com/aub/banc_box/blob/master/LICENSE.md
+[documentation]: http://rdoc.info/github/aub/banc_box
+
+## <a name="copyright"></a>Copyright
+Copyright (c) 2012 Aubrey Holland
+See [LICENSE][] for details.
+
+[license]: https://github.com/aub/banc_box/blob/master/LICENSE.md
 
